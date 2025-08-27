@@ -47,9 +47,11 @@ session_start();
                     </div>
                 </div>
                 <button type="submit" class="login-button">Iniciar Sesión</button>
+            <div id="passwordStrengthMsg" style="color:red; margin-top:8px; display:none;"></div>
             <script>
                 const passwordInput = document.getElementById('password');
                 const togglePassword = document.getElementById('togglePassword');
+                const passwordStrengthMsg = document.getElementById('passwordStrengthMsg');
                 let passwordVisible = false;
                 togglePassword.addEventListener('click', function() {
                     passwordVisible = !passwordVisible;
@@ -57,6 +59,32 @@ session_start();
                     togglePassword.innerHTML = passwordVisible
                         ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12C3.5 7 8 4 12 4C16 4 20.5 7 23 12C20.5 17 16 20 12 20C8 20 3.5 17 1 12Z" stroke="#333" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="3" stroke="#333" stroke-width="2" fill="none"/><line x1="4" y1="4" x2="20" y2="20" stroke="#333" stroke-width="2"/></svg>`
                         : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12C3.5 7 8 4 12 4C16 4 20.5 7 23 12C20.5 17 16 20 12 20C8 20 3.5 17 1 12Z" stroke="#333" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="3" stroke="#333" stroke-width="2" fill="none"/></svg>`;
+                });
+
+                function esPasswordFuerte(password) {
+                    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+                    return regex.test(password);
+                }
+
+                // Validación en tiempo real
+                passwordInput.addEventListener('input', function() {
+                    if (!esPasswordFuerte(passwordInput.value)) {
+                        passwordStrengthMsg.textContent = 'La contraseña es muy débil. Debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos.';
+                        passwordStrengthMsg.style.display = 'block';
+                    } else {
+                        passwordStrengthMsg.style.display = 'none';
+                    }
+                });
+
+                // Validación al enviar el formulario
+                document.querySelector('.login-form').addEventListener('submit', function(e) {
+                    if (!esPasswordFuerte(passwordInput.value)) {
+                        passwordStrengthMsg.textContent = 'La contraseña es muy débil. Debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos.';
+                        passwordStrengthMsg.style.display = 'block';
+                        e.preventDefault();
+                        passwordInput.focus();
+                        return false;
+                    }
                 });
             </script>
             </form>
