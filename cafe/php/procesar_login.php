@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($email) && !empty($password)) {
         try {
             // Buscar el usuario en la base de datos
-            $stmt = $conn->prepare("SELECT id, nombre, apellido, email, password, rol FROM empleados WHERE email = ? COLLATE utf8_bin AND estado = 'activo'");
+            $stmt = $conn->prepare("SELECT id, nombre, apellido, email, password, rol FROM empleados WHERE email = ? AND estado = 'activo'");
             $stmt->execute([$email]);
             $usuario = $stmt->fetch();
 
