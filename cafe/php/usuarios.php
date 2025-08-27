@@ -1,6 +1,9 @@
 <?php
 // Set headers first
 header('Content-Type: application/json');
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 // Start session before any output
 session_start();
@@ -119,7 +122,40 @@ function validarUsuario($datos) {
 switch ($accion) {
     case 'listar':
         try {
-            $stmt = $conn->query("SELECT id, nombre, apellido, email, rol, estado FROM empleados ORDER BY id DESC");
+            // Obtener parámetros de filtro
+            $busqueda = isset($_GET['busqueda']) ? trim($_GET['busqueda']) : '';
+            $rolFiltro = isset($_GET['rol']) ? trim($_GET['rol']) : '';
+            $estadoFiltro = isset($_GET['estado']) ? trim($_GET['estado']) : '';
+            
+            // Preparar la consulta SQL base
+            $sql = "SELECT id, nombre, apellido, email, rol, estado FROM empleados WHERE 1=1";
+            $params = [];
+            
+            // Añadir condiciones según los filtros
+            if (!empty($busqueda)) {
+                $sql .= " AND (nombre LIKE ? OR apellido LIKE ? OR email LIKE ?)";
+                $searchTerm = "%$busqueda%";
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
+            
+            if (!empty($rolFiltro)) {
+                $sql .= " AND rol = ?";
+                $params[] = $rolFiltro;
+            }
+            
+            if (!empty($estadoFiltro)) {
+                $sql .= " AND estado = ?";
+                $params[] = $estadoFiltro;
+            }
+            
+            // Finalizar la consulta con el orden
+            $sql .= " ORDER BY id DESC";
+            
+            // Preparar y ejecutar la consulta
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
             $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             echo json_encode([

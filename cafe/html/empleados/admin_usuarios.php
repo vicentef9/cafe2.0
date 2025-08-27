@@ -59,7 +59,7 @@ if ($rol !== 'administrador') {
             <div class="search-filters">
                 <div class="search-bar">
                     <input type="text" id="searchInput" placeholder="Buscar usuario...">
-                    <button class="search-button" onclick="filtrarUsuarios()">
+                        <button class="search-button" onclick="testFiltrarUsuarios()">
                         <i class="fas fa-search"></i> Buscar
                     </button>
                 </div>
@@ -180,6 +180,6 @@ if ($rol !== 'administrador') {
             </div>
         </main>
     </div>
-    <script src="../../js/admin_usuarios.js?v=3.0"></script>
+    <script src="../../js/admin_usuarios_test.js"></script>
 </body>
 </html>

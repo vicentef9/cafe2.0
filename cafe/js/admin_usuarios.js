@@ -1,5 +1,20 @@
 // Cargar usuarios al iniciar la página
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado - inicializando filtros y eventos');
+    
+    // Inicializar elementos de filtro
+    const searchInput = document.getElementById('searchInput');
+    const filterRole = document.getElementById('filterRole');
+    const filterStatus = document.getElementById('filterStatus');
+    
+    // Debug de elementos encontrados
+    console.log('Elementos de filtro:', {
+        searchInput: searchInput ? 'encontrado' : 'no encontrado',
+        filterRole: filterRole ? 'encontrado' : 'no encontrado',
+        filterStatus: filterStatus ? 'encontrado' : 'no encontrado'
+    });
+    
+    // Cargar usuarios iniciales
     cargarUsuarios();
     
     // Agregar event listener para el formulario
@@ -16,6 +31,44 @@ document.addEventListener('DOMContentLoaded', function() {
     if (passwordField) {
         passwordField.addEventListener('input', function(e) {
             updatePasswordStrength(e.target.value);
+        });
+    }
+    
+    // Aplicar filtros al presionar Enter en el campo de búsqueda
+    if (searchInput) {
+        console.log('Configurando evento keypress para searchInput');
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                console.log('Tecla Enter presionada en búsqueda');
+                filtrarUsuarios();
+            }
+        });
+    }
+    
+    // Aplicar filtros automáticamente al cambiar selects
+    if (filterRole) {
+        console.log('Configurando evento change para filterRole');
+        filterRole.addEventListener('change', function() {
+            console.log('Cambio en selector de rol:', filterRole.value);
+            filtrarUsuarios();
+        });
+    }
+    
+    if (filterStatus) {
+        console.log('Configurando evento change para filterStatus');
+        filterStatus.addEventListener('change', function() {
+            console.log('Cambio en selector de estado:', filterStatus.value);
+            filtrarUsuarios();
+        });
+    }
+    
+    // Asegurar que el botón de búsqueda tenga el evento de click
+    const searchButton = document.querySelector('.search-button');
+    if (searchButton) {
+        console.log('Configurando evento click para botón de búsqueda');
+        searchButton.addEventListener('click', function() {
+            console.log('Botón de búsqueda clickeado');
+            filtrarUsuarios();
         });
     }
 });
@@ -49,9 +102,28 @@ function cerrarModal() {
 }
 
 // Función para cargar la lista de usuarios
-async function cargarUsuarios() {
+async function cargarUsuarios(params = {}) {
     try {
-        const response = await fetch('../../php/usuarios.php?accion=listar');
+        // Construir URL con parámetros de filtro
+        let url = '../../php/usuarios.php?accion=listar';
+        
+        if (params.busqueda) url += `&busqueda=${encodeURIComponent(params.busqueda)}`;
+        if (params.rol) url += `&rol=${encodeURIComponent(params.rol)}`;
+        if (params.estado) url += `&estado=${encodeURIComponent(params.estado)}`;
+        
+        // Añadir un parámetro aleatorio para evitar caché
+        url += `&nocache=${Date.now()}`;
+        
+        console.log('Cargando usuarios con URL:', url);
+        
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
+        });
         
         // Debug the raw response
         const rawText = await response.text();
@@ -73,6 +145,16 @@ async function cargarUsuarios() {
 
         const empleadosTableBody = document.getElementById('empleadosTableBody');
         empleadosTableBody.innerHTML = '';
+        
+        // Mostrar mensaje si no hay resultados
+        if (result.data.length === 0) {
+            empleadosTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="no-results">No se encontraron usuarios con los filtros seleccionados</td>
+                </tr>
+            `;
+            return;
+        }
 
         result.data.forEach(usuario => {
             const estadoClass = usuario.estado === 'activo' ? 'activo' : 'inactivo';
@@ -96,6 +178,29 @@ async function cargarUsuarios() {
         console.error('Error al cargar usuarios:', error);
         alert('Error al cargar la lista de usuarios: ' + error.message);
     }
+}
+
+// Función para filtrar usuarios según los criterios seleccionados
+function filtrarUsuarios() {
+    // Obtener valores de los filtros
+    const busqueda = document.getElementById('searchInput').value.trim();
+    
+    // Asegurarnos de obtener los elementos correctamente
+    const rolElement = document.getElementById('filterRole');
+    const estadoElement = document.getElementById('filterStatus');
+    
+    // Obtener valores o valores predeterminados si los elementos no existen
+    const rol = rolElement ? rolElement.value : '';
+    const estado = estadoElement ? estadoElement.value : '';
+    
+    console.log('Filtrando con parámetros:', { busqueda, rol, estado });
+    
+    // Llamar a cargarUsuarios con los parámetros de filtro
+    cargarUsuarios({ 
+        busqueda: busqueda, 
+        rol: rol, 
+        estado: estado 
+    });
 }
 
 // Función para guardar o actualizar un usuario

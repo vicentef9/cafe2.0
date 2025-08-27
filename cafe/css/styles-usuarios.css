@@ -61,6 +61,14 @@ body, .main-content {
     margin: 0;
 }
 
+.users-table .no-results {
+    text-align: center;
+    padding: 30px;
+    color: #666;
+    font-style: italic;
+    background-color: #f8fafc;
+}
+
 .users-table th {
     background: #3a7bd5;
     color: #ffffff;
