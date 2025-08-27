@@ -127,35 +127,7 @@ if ($rol !== 'administrador') {
                         </div>
                         <div class="form-group">
                             <label for="password">Contraseña</label>
-                            <input type="password" id="password" name="password" 
-                                   placeholder="Mínimo 8 caracteres" 
-                                   autocomplete="new-password">
-                            <div id="password-strength" class="password-strength" style="display: none;">
-                                <div class="strength-bar">
-                                    <div id="strength-fill" class="strength-fill"></div>
-                                </div>
-                                <div id="strength-text" class="strength-text"></div>
-                            </div>
-                            <div class="password-requirements">
-                                <div class="requirement" id="req-length">
-                                    <span class="req-icon">✗</span> Al menos 8 caracteres
-                                </div>
-                                <div class="requirement" id="req-lowercase">
-                                    <span class="req-icon">✗</span> Una letra minúscula
-                                </div>
-                                <div class="requirement" id="req-uppercase">
-                                    <span class="req-icon">✗</span> Una letra mayúscula
-                                </div>
-                                <div class="requirement" id="req-number">
-                                    <span class="req-icon">✗</span> Un número
-                                </div>
-                                <div class="requirement" id="req-special">
-                                    <span class="req-icon">✗</span> Un carácter especial (!@#$%^&*()_+-=[]{}|;:,.<>?)
-                                </div>
-                                <div class="requirement" id="req-common">
-                                    <span class="req-icon">✗</span> No usar contraseñas comunes
-                                </div>
-                            </div>
+                            <input type="password" id="password" name="password">
                         </div>
                         <div class="form-group">
                             <label for="rol">Rol</label>
@@ -180,6 +152,10 @@ if ($rol !== 'administrador') {
             </div>
         </main>
     </div>
+<<<<<<< HEAD
     <script src="../../js/admin_usuarios_test.js"></script>
+=======
+    <script src="../../js/admin_usuarios.js?v=2.0"></script>
+>>>>>>> b9729e4c713ec999d6c564eb1015acca499e346e
 </body>
 </html>
